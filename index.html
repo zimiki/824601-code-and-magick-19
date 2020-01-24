@@ -181,6 +181,31 @@
   </div>
 </template>
 
+<script>
+var fireballSize = 22;
+var getFireballSpeed = function(left) {
+  return left ? 5 : 2;
+};
+var wizardSpeed = 3;
+var wizardWidth = 70;
+var getWizardHeight = function(wizardWidth) {
+//возвращает пропорциональную высоту мага = 1.337 * ширина мага
+ var wizardHeight = 1.337 * wizardWidth;
+ return wizardHeight;
+}
+
+function getWizardX(width) {
+//центр фигурки мага находился посередине игрового поля
+  var wizardX = (width / 2) - (wizardWidth / 2);
+  return wizardX;
+};
+function getWizardY(height) {
+//маг на высоте две трети игрового поля от земли, координатная сетка игры начинается с левого верхнего угла
+  var wizardY = height / 3  - getWizardHeight(wizardWidth);
+  return wizardY;
+};
+</script>
+
 <script src="js/game.js"></script>
 
 </body>
