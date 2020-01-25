@@ -36,7 +36,6 @@ var getMaxElement = function(arr) {
     return Math.floor(rand);
 };
 
-
 window.renderStatistics = function(ctx, names, times) {
   //Функция отрисовки облака: сначала тень, потом облако
   var renderCloud = function(ctx, x, y, color) {
@@ -54,7 +53,7 @@ window.renderStatistics = function(ctx, names, times) {
   ctx.fillStyle = '#000';
   ctx.font = fontStyle;
   ctx.fillText('Ура вы победили!', gistX, gistY - GIST_HEIGHT - (3 * lineHeight));
-  ctx.fillText('Список результатов:', gistX, gistY - GIST_HEIGHT - (2 * lineHeight));
+  ctx.fillText('Список результатов: ', gistX, gistY - GIST_HEIGHT - (2 * lineHeight));
 
   //Определение самого большого времени - это будет бар высотой 150. Остальные должды быть меньше него пропорционально
   var maxTime = getMaxElement(times);
