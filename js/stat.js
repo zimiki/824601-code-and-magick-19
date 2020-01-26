@@ -41,6 +41,17 @@ var renderCloud = function (ctx, x, y, color) {
   ctx.fillRect(x, y, CLOUD_WIDTH, CLOUD_HEIGHT);
 };
 
+// Выбор цвета 'Вы' - красный, остальные синие. Синий случайной насыщенности цвета
+var getPlayerColor = function (name) {
+  var color = YOU_COLOR;
+  if (name !== 'Вы') {
+    // Синий это hsl(240, 100%, 50%). Случайная saturate (насыщенность) - 2 параметр цвета hsl. Насыщенность возьму от 5% до 100%
+    var randPlayerColor = 'hsl(240, ' + getRandom(5, 100) + '%, 50%)';
+    color = randPlayerColor;
+  }
+  return color;
+};
+
 window.renderStatistics = function (ctx, names, times) {
   // Функция отрисовки облака: сначала тень, потом облако
   renderCloud(ctx, CLOUD_X + SHADOW_GAP, CLOUD_Y + SHADOW_GAP, SHADOW_COLOR);
@@ -68,15 +79,8 @@ window.renderStatistics = function (ctx, names, times) {
     ctx.font = fontStyle;
     ctx.fillText(names[i], gistX + i * (BAR_WIDTH + BAR_GAP), gistY + lineHeight);
     ctx.fillText(Math.ceil(times[i]), gistX + i * (BAR_WIDTH + BAR_GAP), gistY - barHeigth - FONT_SIZE);
-    // Выбор цвета 'Вы' - красный, остальные синие. Синий случайной насыщенности цвета, по заданию использовать hsl.
-    if (names[i] === 'Вы') {
-      ctx.fillStyle = YOU_COLOR;
-    } else {
-      // Синий это hsl(240, 100%, 50%). Случайная saturate (насыщенность) - 2 параметр цвета hsl. Насыщенность возьму от 5% до 100%
-      var randPlayerColor = 'hsl(240, ' + getRandom(5, 100) + '%, 50%)';
-      ctx.fillStyle = randPlayerColor;
-    }
     // Отрисовка бара
+    ctx.fillStyle = getPlayerColor(names[i]);
     ctx.fillRect(gistX + i * (BAR_WIDTH + BAR_GAP), gistY - barHeigth, BAR_WIDTH, barHeigth);
   }
 };
