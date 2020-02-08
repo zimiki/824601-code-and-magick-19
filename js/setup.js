@@ -5,6 +5,9 @@ var WIZARD_NAMES = ['Иван', 'Хуан Себастьян', 'Мария', 'К
 var WIZARD_SURNAMES = ['да Марья', 'Верон', 'Мирабелла', 'Вальц', 'Онопко', 'Топольницкая', 'Нионго', 'Ирвинг'];
 var COAT_COLOR = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161)', 'rgb(56, 159, 117)', 'rgb(215, 210, 55)', 'rgb(0, 0, 0)'];
 var EYES_COLOR = ['black', 'red', 'blue', 'yellow', 'green'];
+var FIREBALL_COLOR = ['#ee4830', '#30a8ee', '#5ce6c0', '#e848d5 ', '#e6e848'];
+var ESC_KEY = 'Escape';
+var ENTER_KEY = 'Enter';
 
 // Функция нахождения случайного числа в массиве
 var getRandom = function (arr) {
@@ -19,8 +22,8 @@ var createMockDataWizards = function () {
   for (var i = 0; i < NUMBER_SIMILAR; i++) {
     var wizard = {
       name: WIZARD_NAMES[getRandom(WIZARD_NAMES)] + ' ' + WIZARD_SURNAMES[getRandom(WIZARD_SURNAMES)],
-      coatColor: COAT_COLOR[[getRandom(COAT_COLOR)]],
-      eyesColor: EYES_COLOR[[getRandom(EYES_COLOR)]]
+      coatColor: COAT_COLOR[getRandom(COAT_COLOR)],
+      eyesColor: EYES_COLOR[getRandom(EYES_COLOR)]
     };
     arr.push(wizard);
   }
@@ -54,5 +57,116 @@ var similarListElement = document.querySelector('.setup-similar-list');
 similarListElement.appendChild(fragment);
 
 // 4. Отображение блоков с классом 'setup', 'setup-similar', убирает класс 'hidden'.
-document.querySelector('.setup').classList.remove('hidden');
 document.querySelector('.setup-similar').classList.remove('hidden');
+
+
+// --- З А Д А Н И Е     О Б Р А Б О Т К А      С О Б Ы Т И Й ------
+
+
+// Обозначение перемееных открытия закрытия окна setup
+var setup = document.querySelector('.setup');
+var setupOpen = document.querySelector('.setup-open');
+var setupClose = setup.querySelector('.setup-close');
+// Обозначение перемееных для смены цветов
+var setupPlayer = setup.querySelector('.setup-player');
+var setupWizardCoat = setupPlayer.querySelector('.setup-wizard .wizard-coat');
+var inputCoatColor = setupPlayer.querySelector('input[name=coat-color]');
+var setupWizardEyes = setupPlayer.querySelector('.setup-wizard .wizard-eyes');
+var inputEyesColor = setupPlayer.querySelector('input[name=eyes-color]');
+var setupWizardfireball = setupPlayer.querySelector('.setup-fireball-wrap');
+var inputFireballColor = setupPlayer.querySelector('input[name=fireball-color]');
+// Обозначение поля ввода имени, если активно, то окно закрываться настройки не должны
+var inputUserName = setup.querySelector('input[name=username]');
+
+
+// Счетчик для смены значений по порядку из массивов
+var makeCounter = function (arr) {
+  var count = 0;
+  return function () {
+    if (count > (arr.length - 2)) {
+      count = 0;
+      return count;
+    }
+    return ++count;
+  };
+};
+
+// Переменные-счетчики
+var counterCoatColor = makeCounter(COAT_COLOR);
+var counterEyesColor = makeCounter(EYES_COLOR);
+var counterFireballColor = makeCounter(FIREBALL_COLOR);
+
+// Функция, которая меняет цвет плаща
+var changeCoatColor = function () {
+  var newCoatColor = COAT_COLOR[counterCoatColor()];
+  inputCoatColor.value = newCoatColor;
+  setupWizardCoat.style.fill = newCoatColor;
+};
+
+// Функция, которая меняет цвет глаз
+var changeEyesColor = function () {
+  var newEyesColor = EYES_COLOR[counterEyesColor()];
+  inputEyesColor.value = newEyesColor;
+  setupWizardEyes.style.fill = newEyesColor;
+};
+
+// Функция, которая меняет цвет фаербола
+var changeFireballColor = function () {
+  var newFireballColor = FIREBALL_COLOR[counterFireballColor()];
+  inputFireballColor.value = newFireballColor;
+  setupWizardfireball.style.cssText = 'background: ' + newFireballColor;
+};
+
+// Функция, которая ОТКРЫВАЕТ окно настройки персонажа .setup. При отрытом окне слушаем включаются обработчки:
+// 1. события нажатия кнопки Esc
+// 2. события клика на клик по мантии волшебника
+// 3. события клика на клик по глазам волшебника
+// 4. события клика на клик по фаерболу
+var openSetup = function () {
+  setup.classList.remove('hidden');
+  document.addEventListener('keydown', onPopupEscPress);
+  setupWizardCoat.addEventListener('click', changeCoatColor);
+  setupWizardEyes.addEventListener('click', changeEyesColor);
+  setupWizardfireball.addEventListener('click', changeFireballColor);
+};
+
+// Функция, которая ЗАКРЫВАЕТ окно настройки персонажа .setup. Функция, в том числе, отключает обработчики настроек
+var closeSetup = function () {
+  if (inputUserName === document.activeElement) { // Проверка, чтобы актиным не было поле ввода имени
+    return;
+  }
+  setup.classList.add('hidden');
+  document.removeEventListener('keydown', onPopupEscPress);
+  setupWizardCoat.removeEventListener('click', changeCoatColor);
+  setupWizardEyes.removeEventListener('click', changeEyesColor);
+  setupWizardfireball.removeEventListener('click', changeFireballColor);
+};
+
+// Функция, которая определяет какая кнопка нажимается
+var onPopupEscPress = function (evt) {
+  if (evt.key === ESC_KEY) {
+    closeSetup();
+  }
+};
+
+// Добавялем обработчики событий на click
+setupOpen.addEventListener('click', function () {
+  openSetup();
+});
+setupClose.addEventListener('click', function () {
+  closeSetup();
+});
+
+// Добавляет обработчики  событий на keydown
+setupOpen.addEventListener('keydown', function (evt) {
+  if (evt.key === ENTER_KEY) {
+    openSetup();
+  }
+});
+setupClose.addEventListener('keydown', function (evt) {
+  if (evt.key === ENTER_KEY) {
+    closeSetup();
+  }
+});
+
+
