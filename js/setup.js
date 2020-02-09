@@ -117,17 +117,35 @@ var changeFireballColor = function () {
   setupWizardfireball.style.cssText = 'background: ' + newFireballColor;
 };
 
+// Функция, которая при нажатии Esc - закрывает setup
+var onSetupEscPress = function (evt) {
+  if (evt.key === ESC_KEY) {
+    closeSetup();
+  }
+};
+
+// Функция, которая при нажатии Enter на кпопке закрытия - закрывает setup
+var onSetupCloseEnterPress = function (evt) {
+  if (evt.key === ENTER_KEY) {
+    closeSetup();
+  }
+};
+
 // Функция, которая ОТКРЫВАЕТ окно настройки персонажа .setup. При отрытом окне слушаем включаются обработчки:
 // 1. события нажатия кнопки Esc
 // 2. события клика на клик по мантии волшебника
 // 3. события клика на клик по глазам волшебника
 // 4. события клика на клик по фаерболу
+// 5. события клика на кнопку закрытия
+// 6. события Enter на кнопку закрытия
 var openSetup = function () {
   setup.classList.remove('hidden');
-  document.addEventListener('keydown', onPopupEscPress);
+  document.addEventListener('keydown', onSetupEscPress);
   setupWizardCoat.addEventListener('click', changeCoatColor);
   setupWizardEyes.addEventListener('click', changeEyesColor);
   setupWizardfireball.addEventListener('click', changeFireballColor);
+  setupClose.addEventListener('click', closeSetup);
+  setupClose.addEventListener('keydown', onSetupCloseEnterPress);
 };
 
 // Функция, которая ЗАКРЫВАЕТ окно настройки персонажа .setup. Функция, в том числе, отключает обработчики настроек
@@ -136,36 +154,21 @@ var closeSetup = function () {
     return;
   }
   setup.classList.add('hidden');
-  document.removeEventListener('keydown', onPopupEscPress);
+  document.removeEventListener('keydown', onSetupEscPress);
   setupWizardCoat.removeEventListener('click', changeCoatColor);
   setupWizardEyes.removeEventListener('click', changeEyesColor);
   setupWizardfireball.removeEventListener('click', changeFireballColor);
+  setupClose.removeEventListener('click', closeSetup);
+  setupClose.removeEventListener('keydown', onSetupCloseEnterPress);
 };
 
-// Функция, которая определяет какая кнопка нажимается
-var onPopupEscPress = function (evt) {
-  if (evt.key === ESC_KEY) {
-    closeSetup();
-  }
-};
-
-// Добавялем обработчики событий на click
+// Добавялем обработчики на открытие setup
 setupOpen.addEventListener('click', function () {
   openSetup();
 });
-setupClose.addEventListener('click', function () {
-  closeSetup();
-});
-
-// Добавляет обработчики  событий на keydown
 setupOpen.addEventListener('keydown', function (evt) {
   if (evt.key === ENTER_KEY) {
     openSetup();
-  }
-});
-setupClose.addEventListener('keydown', function (evt) {
-  if (evt.key === ENTER_KEY) {
-    closeSetup();
   }
 });
 
